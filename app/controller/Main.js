@@ -1,3 +1,6 @@
+/**
+ * This Controller will execute actions based on events over the Main view
+ */
 Ext.define('MyApp.controller.Main', {
 	extend: 'Ext.app.Controller',
 	
@@ -8,10 +11,12 @@ Ext.define('MyApp.controller.Main', {
 	    stores: ['Employees', 'Companies'],
 
 	    refs: {
+            //this is the selectfield that contains the property we want to filter by.
 	    	searchOption: 'main titlebar selectfield[name=where]'
 	    },
 
 		control: {
+			//when main view is displayed, load the employees store.
 			'main': {
 				'activate': 'loadEmployees'
 			},
@@ -24,6 +29,7 @@ Ext.define('MyApp.controller.Main', {
 				'tap': 'doSomethingOnButtonItem'
 			},
 
+			//when user types into the search textfield then filter employees list.
 			'main titlebar textfield[name=filter]': {
 				'keyup': 'filterEmployeeList'
 			}
@@ -33,6 +39,10 @@ Ext.define('MyApp.controller.Main', {
 
 	},
 
+	/**
+	 * Read the value from the textfield and filter the list based on the search term over the property 
+	 * selected on the searchOption ref, in this case a select field with Employee's model properties.
+	 */
 	filterEmployeeList: function(textfield, event, eOpts){
 		var me = this,
 			what = textfield.getValue(),
@@ -55,9 +65,14 @@ Ext.define('MyApp.controller.Main', {
 
 	},
 
+
+	/**
+	 * Load te employees store using the store proxy configuration
+	 */
 	loadEmployees: function(){
 		Ext.getStore('Employees').load();
 	},
+
 
 	doSomething: function(){
 		var employees = Ext.getStore('Employees'),

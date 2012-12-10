@@ -7,6 +7,8 @@ Ext.define('MyApp.model.Employee', {
 			'id',
 			'first',	
 			'last',
+			//the name field doesn't exist on the data retrieved. It is a dynamic field created for each 
+			//record returning a string with the form {last}, {first}
 			{
 				name: 'name',
 				convert: function(value, record){
@@ -25,6 +27,7 @@ Ext.define('MyApp.model.Employee', {
 			}
 		],
 
+		//this store will load employees from a fake endpoint, in this case a json file under data folder.
 		proxy: {
 	        type: "ajax",
 	        url : "data/employees.json",
