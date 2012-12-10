@@ -27,7 +27,7 @@ Ext.define('MyApp.model.Employee', {
 			}
 		],
 
-		//this store will load employees from a fake endpoint, in this case a json file under data folder.
+		//this store will load employees from a fake endpoint, in this case a json file under data
 		proxy: {
 	        type: "ajax",
 	        url : "data/employees.json",

@@ -18,8 +18,8 @@ This sample application covers, but it is not limited to, the following set of f
 - The app.js file and Viewport
 - Use of complex layouts (hbox, vbox, fit, card, etc.)
 - Models definitions
-- Associations (belongsTo, hasMany, hasOne)
 - Stores and Proxies
+- Associations (belongsTo, hasMany, hasOne)
 - Form panels, using actions in buttons and names in fields to target controllers actions.
 - Using the Application as event bus to communicate between Controllers avoiding a Controller having a reference to another one.
 - Proxies to read from files (.json) to emulate fake REST endpoints
@@ -115,3 +115,128 @@ In this case we have only 2 items: a dataview and a list. The dataview has a _fl
 	});
 
 
+### Models definitions
+For the sample application we have defined a simple model to represent an Employee. This Employee has a few fields such _last_ and _first_ name and an _id_. The Model definition looks like this:
+
+	Ext.define('MyApp.model.Employee', {
+		extend: 'Ext.data.Model',
+		
+		config: {
+			fields: ['id', 'first', 'last']
+		}
+	});
+	
+
+>#### Model Name Convention
+> It is common to name the model as in a singular manner, leaving the plural for Stores (being a collection of X Model) 
+
+That's the only thing we need to declare a Model. We can be more specific when declaring the fields:
+
+	Ext.define('MyApp.model.Employee', {
+		extend: 'Ext.data.Model',
+		
+		config: {
+			fields: [
+			
+				//we can declare the type of the field
+				{name: 'id', type: 'int'},
+				
+				//we can assing a different name, in this case the data will retrieve a 
+				//'first' property which we will map to be 'firstName' on our Model.
+			 	{name: 'firstName', mapping: 'first'}, 
+			 	
+			 	//Or we can just put the name of the property
+			 	'last',
+			 	
+			 	//We can add a dynamic field too
+			 	{
+			 		name: 'name',
+			 		convert: function(value, record){
+			 			return record.get('last') + ', ' + record.get('firstName');
+			 		}
+			 	}
+			 ]
+		}
+	});
+	
+### Stores and Proxies
+As we have seen a Model represents a particular instance. For a collection of those instances we have Stores. 
+
+Defining a Store is very simple: Let's assume we have an Employee model and we need a collection of them, so we define an Employees Store:
+
+	Ext.define('MyApp.store.Employees', {
+		extend: 'Ext.data.Store',
+		
+		config: {
+			model: 'MyApp.model.Employee',
+			
+			data: [
+				{"id": 1, "first": "Peter", "last": "Doe"}
+				/*more inline data*/
+			]
+		}
+		
+	});
+	
+In the example above we have defined a simple Store named 'Employees' - remember that we use the plural of the model the Stores has defined - and we _"loaded"_ inline data.
+
+In case we want to read from a datasource - which is not memory - we have to specify a **proxy** who will be responsible to fetch the data. 
+
+Proxies can be specified in the Model (more recommended) or in the Store in itself. The rule is simple, the Store will use the proxy defined inside the Model at least it has its own proxy defined.
+
+So in this case we want to load data from a _.json_ file we keep into _data_ folder. We just need to declare the proxy. So the Employee definition will look like this:
+
+	Ext.define('MyApp.model.Employee', {
+		extend: 'Ext.data.Model',
+		
+		config: {
+			fields: [
+				'id',
+			 	{name: 'firstName', mapping: 'first'}, 
+			 	'last',
+			 	{
+			 		name: 'name',
+			 		convert: function(value, record){
+			 			return record.get('last') + ', ' + record.get('firstName');
+			 		}
+			 	}
+			 ],
+			 
+			 proxy: {
+			 	type: "ajax",
+	        	url : "data/employees.json",
+	        	reader: {
+	            	type: "json",
+	            	rootProperty: "employees"
+	        	}
+			 }
+		}
+	});	
+
+So now we have an Store that will load data from a json file as a datasource.
+
+### Associations (belongsTo, hasMany, hasOne)
+We can declare associations between two models. You can use _hasMany_, _belongsTo_ and _hasOne_ associations. An Employee _belongs to_ a Company and a Company _has many_ Employees.
+
+	Ext.define('MyApp.model.Company', {
+		extend: 'Ext.data.Model',
+		
+		config: {
+			fields: ['id', 'name', 'address'],
+
+			associations: [
+				{
+					type: 'hasMany',
+					model : 'MyApp.model.Employee',
+					name : 'employees',
+					foreingKey: 'company_id',
+					autoLoad: true
+				}
+			]
+		}
+	});
+
+
+We have specified _autoLoad:**true**_ that means that every time I instantiate a Company model, the association will try to get the data related to that particular Company instance. Where does the association read that data? Well, if you remember we specified a _proxy_ into the Employee model. That proxy will be used to query the datasource to retrieve Employees for that particular Company instance. Since we are using _fake_ data we would ending up with inconsistent data because we read a json file and retrieve the same data set no matter which parameter or filter we applied.
+
+	
