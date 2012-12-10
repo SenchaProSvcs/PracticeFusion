@@ -52,7 +52,7 @@ In the sample code, we have defined a view called 'Main' which we use in the **l
 
 from the documentation [Ext.Viewport](http://docs.sencha.com/touch/2-1/#!/api/Ext.Viewport):
 
-"Ext.Viewport is a instance created when you use Ext.setup. Because Ext.Viewport extends from Ext.Container, it has as layout (which defaults to Ext.layout.Card). This means you can add items to it at any time, from anywhere in your code. The Ext.Viewport fullscreen configuration is true by default, so it will take up your whole screen."
+>"Ext.Viewport is a instance created when you use Ext.setup. Because Ext.Viewport extends from Ext.Container, it has as layout (which defaults to Ext.layout.Card). This means you can add items to it at any time, from anywhere in your code. The Ext.Viewport fullscreen configuration is true by default, so it will take up your whole screen."
 
 Ext.application in this case calls Ext.setup behind the scenes. So you have the viewport created when launch method is executed.
 
@@ -61,8 +61,9 @@ Layouts are a very powerful feature in Sencha Touch. You can arrange your compon
 This is important since you may want your application to run over different devices with different screen sizes. 
 The Main view makes use of a layout **hbox** and **flex** properties on its childs to determine how they are positioned into the screen.
 
-#### A few words regarding layouts and items 
-We have to make a separation between items that will be part of the layout and the ones that are _'docked'_. A _docked_ item is usually **not part** of the layout process. Those are special items that will be positioned into the component to act as, for instance, toolbars.
+>#### A few words regarding layouts and items 
+			
+>We have to make a separation between items that will be part of the layout and the ones that are _'docked'_. A _docked_ item is usually **not part** of the layout process .Those are special items that will be positioned into the component to act as, for instance, toolbars.
 
 The MyApp.view.Main class is a TabPanel, which has a Card Layout. This means that only one item will be displayed at a time.
 
