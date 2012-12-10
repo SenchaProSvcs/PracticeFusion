@@ -57,7 +57,60 @@ from the documentation [Ext.Viewport](http://docs.sencha.com/touch/2-1/#!/api/Ex
 Ext.application in this case calls Ext.setup behind the scenes. So you have the viewport created when launch method is executed.
 
 ### Complex Layouts (hbox, vbox, fit, card)
+Layouts are a very powerful feature in Sencha Touch. You can arrange your components in many different ways without specifying any pixel dimension.
+This is important since you may want your application to run over different devices with different screen sizes. 
+The Main view makes use of a layout **hbox** and **flex** properties on its childs to determine how they are positioned into the screen.
+
+#### A few words regarding layouts and items 
+We have to make a separation between items that will be part of the layout and the ones that are _'docked'_. A _docked_ item is usually **not part** of the layout process. Those are special items that will be positioned into the component to act as, for instance, toolbars.
+
+The MyApp.view.Main class is a TabPanel, which has a Card Layout. This means that only one item will be displayed at a time.
+
+In our sample, we have only one item for out TabPanel - the one with title **"Welcome"**
+This item has an **hbox** layout, so the components defined inside it can be arranged as horizontal boxes. Remember, only those items that has no _docked_ definition will be part of the layout.
+
+In this case we have only 2 items: a dataview and a list. The dataview has a _flex_ property of 2 and the list has a _flex_ property of 1. This means that the layout will count the remaining space as 3 (2+1) and each component will have a size of 2/3 in the first case, and 1/3 on the second one. This size is relative to the container of the panel, in this case the Main view, which has been added to the viewport instance. So, for this particular scenario, we have a container that takes fullscreen, added a docked toolbar - the tabBar which is positioned bottom - then added a component which has another toolbar docked on top and finally, the remaining space for width - because we are using an hbox layout - will be divided using the flex strategy. No matter where you display this component, you always will have a 2/3 + 1/3 of the screen size.
 
 
+	Ext.define('MyApp.view.Main', {
+		extend: 'Ext.tab.Panel',
+		
+		//...
+		
+		config: {
+			//...
+			
+			//the items for the tabPanel
+			items:[
+				{
+					title: 'Welcome',
+					iconCls: 'home',
+					layout: 'hbox', //layout for the first item 
+					items: [
+						//this component is docked so it is not part of the hbox layout.
+						{
+							docked: 'top',
+							xtype: 'titlebar',
+							title: 'Sample App',
+							//...
+						},
+						//the first item on the hbox layout
+						{
+							xtype: 'dataview',
+							//...
+							flex: 2
+						},
+						{
+							xtype: 'list',
+							//...
+							flex: 1
+						}
+					]				
+				}
+			]
+		
+		}
+	
+	});
 
 
