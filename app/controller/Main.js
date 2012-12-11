@@ -25,7 +25,7 @@ Ext.define('MyApp.controller.Main', {
 				tap: 'doSomething'
 			},
 
-			'main mylistitem button[action=bar]': {
+			'main dataitem button[action=bar]': {
 				'tap': 'doSomethingOnButtonItem'
 			},
 
@@ -90,7 +90,7 @@ Ext.define('MyApp.controller.Main', {
 
 	doSomethingOnButtonItem: function(btn, event, eOpts){
 		//getting the record of a given list item
-		var employee = btn.up('mylistitem').getRecord();
+		var employee = btn.up('dataitem').getRecord();
 		console.log('button tap for record', employee);
 		console.log('name for employee', employee.get('first'));
 

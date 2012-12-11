@@ -3,9 +3,10 @@ Ext.define('MyApp.view.Main', {
     xtype: 'main',
     requires: [
         'Ext.TitleBar',
-        'Ext.dataview.DataView',
         'Ext.field.Select',
-        'MyApp.view.ListItem'
+        'MyApp.view.employee.DataView',
+        'MyApp.view.employee.List',
+        'MyApp.view.employee.Form'
     ],
     config: {
         tabBarPosition: 'bottom',
@@ -45,16 +46,20 @@ Ext.define('MyApp.view.Main', {
                         ]
                     },
                     {
-                        xtype: 'dataview',
-                        useComponents: true,
-                        defaultType: 'mylistitem',
-                        store: 'Employees',
+                        xtype: 'employeedataview',
                         flex: 2
-                    },{
-                        xtype: 'list',
-                        store: 'Employees',
-                        itemTpl: '{name}',
-                        flex: 1
+                    },
+                    {
+                        layout: 'card',
+                        flex: 1,
+                        items: [
+                            {
+                                xtype: 'employeelist'
+                            },
+                            {
+                                xtype: 'employeeform'
+                            }
+                        ]
                     }
                 ]
                 

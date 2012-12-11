@@ -20,8 +20,8 @@ This sample application covers, but it is not limited to, the following set of f
 - Models definitions
 - Stores and Proxies
 - Associations (belongsTo, hasMany, hasOne)
-- Form panels, using actions in buttons and names in fields to target controllers actions.
-- Using the Application as event bus to communicate between Controllers avoiding a Controller having a reference to another one.
+- Form panels, Models and Controllers.
+- Using the Application as event bus.
 - Proxies to read from files (.json) to emulate fake REST endpoints
 - Locales/i18n
 - Best Practices for Controllers/Views
@@ -240,4 +240,431 @@ Here it is an example where an Employee _belongs to_ a Company and a Company _ha
 
 We have specified _autoLoad:**true**_ that means that every time I instantiate a Company model, the association will try to get the data related to that particular Company instance. Where does the association read that data from? Well, if you remember we specified a _proxy_ into the Employee model. That proxy will be used to query the datasource to retrieve Employees for that particular Company instance. Since we are using _fake_ data we would ending up with inconsistent data because we read a json file and retrieve the same data set no matter which parameter or filter we applied.
 
+### Form panels, Models and Controllers
+Let's assume that we want to edit/show a particular employee information in a form panel. So when a user tap on the Employees list the application will show a panel with the selected employee info.
+
+To do so we have to perform some changes into our app. We will need a new Form - it might be called EmployeeForm -, an action on some Controller to perform a task when an Employee is selected, load the employee and finaly display the Form.
+
+Remember that by now we have everything defined into our Main view. We have a dataview and a list for the employee. Now we are adding a new Form. 
+
+#### Refactoring
+Since we have a few components that would represent a particular entity, we can group them into a package, in this case we can have an **employee** package in our views.
+So we can refactor the Main view to promote the dataview and employee list into classes and group them into the employee package.
+
+Let's start with the List. We have this definition on the Main view:
+
+		{
+			xtype: 'list',
+			store: 'Employees',
+			itemTpl: '{name}',
+			flex: 1
+		} 	
+		
+We can define the EmployeesList as a class, but since we are going to create a new package named employee it is not so helpful to have a class name like:
+
+	MyApp.view.employee.EmployeesList
+	
+What about this?
+
+	MyApp.view.employee.List
+
+We know we have a List - which indirectly means many - defined into an employee package, so we can easily guess that it is a List of Employees. This is just a naming convention, you can do whatever you want. This is just an example to repeat names in classes and packages.
+
+Let's create the class and move some properties into it.
+
+	Ext.define('MyApp.view.employee.List', {
+    	extend : 'Ext.dataview.List',
+		xtype  :  'employeelist'
+				
+    	config : {
+        	store   : 'Employees',
+        	itemTpl : '{name}'
+    	}
+	});
+
+Now we have to do some changes to Main view. We have to add the new class into the requires array, and remove the reference to Ext.dataview.List. Then, we can just modify the list definition in the config as follows:
+
+	Ext.define('MyApp.view.Main', {
+		extend: 'Ext.tab.Panel',
+		requires: [
+			//...
+			'MyApp.view.employee.List'
+			//...
+		]
+		//...
+		config: {
+			items: [
+				{
+					title: 'Welcome',
+					layout: 'hbox',
+					//...
+					items:[
+						//...
+						{
+							xtype: 'employeelist',
+							flex: 1
+						}
+					]
+				}
+			]
+		}
+
+	});
+	
+As you can see we just added a new require to specify the dependency with the new List class and changed the definition of the list instance. Please note that we have not moved the flex property into the class definition. We keep it in the instantiation since it depends on the container layout. This makes clear how the component is arranged in the screen just by reading the container definition.
+
+We can do the same excercise with the dataview as well. So we will get a new class _MyApp.view.employee.DataView_. 
+
+
+####Creating the Form
+So now let's move on into the Form to edit an Employee. We can create a new class into the employee package called _Form_:
+
+	Ext.define('MyApp.view.employee.Form', {
+    	extend: 'Ext.form.Panel',
+		xtype: 'employeeform',
+		
+    	requires: [
+       		'Ext.field.Text'
+    	],
+
+    	config: {
+
+        	items: [
+            	{
+                	xtype : 'textfield',
+                	name  :  'first',
+                	label : 'First Name'
+            	},
+            	{
+               	 	xtype : 'textfield',
+                	name  : 'last',
+                	label : 'Last Name'
+            	}
+        	]
+    	}
+	});
+
+#### Display the Employee Form
+Now we have the form created we need to find out where and when the form will be displayed. In this case I decided to show the form in the same space where the list is shown. When an employee is selected from the list we will show the employee information in the same place.
+
+To do that we have to refactor again the Main view a little bit. The idea is to have a component that can show one item at a time but it can keep more than one. That's doable by using a card layout. In this case we would need just a wrapper component to keep the list and the form. So the Main view will look like this:
+
+	Ext.define('MyApp.view.Main', {
+		extend: 'Ext.tab.Panel',
+		requires: [
+			//...
+			'MyApp.view.employee.List',
+			'MyApp.view.employee.Form'
+			//...
+		]
+		//...
+		config: {
+			items: [
+				{
+					title: 'Welcome',
+					layout: 'hbox',
+					//...
+					items:[
+						//...
+						{
+							layout: 'card'
+							flex: 1,
+							items: [
+								{
+									xtype: 'employeelist'
+								},
+								{
+									xtype: 'employeeform'
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+
+	});		
+
+Keep into account we have declared 'MyApp.view.employee.Form' as a dependency so we can use its xtype ('employeeform').
+
+Now we have the form and the list we need to wire the events to display the form when the user taps on the list item. 
+We will need a new Controller, just to avoid keeping all inside the Main one, so we can define a new Controller to respond to events in the employee list. Same as with views, we can create a package for employees controllers and define all of them inside that package.
+
+	Ext.define('MyApp.controller.employee.List', {
+    	extend: 'Ext.app.Controller',
+
+    	config: {
+
+        	control: {
+
+            	'employeelist': {
+                	'itemtap': 'showEmployeeForm'
+            	}
+
+        	}
+    	},	
+
+	
+    	showEmployeeForm: function(){
+
+    	}
+	});	
+
+This controller named List, will be responsible for the employee list view events. In this way we can keep responsibilites separated. Remember you need to add it to the app.js controllers definitions.
+We can do this to show the form:
+
+	showEmployeeForm: function(list, index, target, record, e, eOpts){
+        var container = list.up('container'),
+            form = container.down('formpanel');
+
+        form.setRecord(record);
+        container.setActiveItem(form);           
+	}
+
+
+If you take a look on the Form definition and the Model you will notice that the fields have the same name in both definitons. So in this case we can use a setRecord in the form to pass the model instance (record) and the form will show up populated with the fields values in the current record.
+
+But here we are calling or modifying state into a view (the form) that is not responsibility of this particular controller. We may want to have the code to set the record into the form into a Form controller. 
+There is a technique to separate this and to have two controller communicated between each other without having references between them. This technique involves using the application as an Event Bus.
+
+### Using the application as an Event Bus
+In the last example we saw a Controller modifying a view state that is not part of its boundaries. Let's refactor it a bit to do something better. First, let's create a new controller for the employee form and add it to the app.js
+
+	Ext.define('MyApp.controller.employee.Form', {
+    	extend: 'Ext.app.Controller',
+
+	    config: {
+
+    	    refs: {
+        	    form: 'employeeform'
+        	}
+
+    	},
+
+    	init: function(){
+
+        	this.getApplication().on({
+            	'showemployeeform': this.showEmployee,
+            	scope: this
+        	});
+
+    	},
+
+    	showEmployee: function(record){
+        	var me = this,
+            	form = me.getForm(),
+            	container = form.up('container');
+
+        	form.setRecord(record);
+        	container.setActiveItem(form);
+    	}
+
+	});
+
+And the new version of the List controller will look like this:
+
+	Ext.define('MyApp.controller.employee.List', {
+    	extend: 'Ext.app.Controller',
+
+	    config: {
+
+    	    control: {
+
+	            'employeelist': {
+    	            'itemtap': 'showEmployeeForm'
+       		     }
+
+        	}
+    	},
+
+
+	    showEmployeeForm: function(list, index, target, record, e, eOpts){
+    	    this.getApplication().fireEvent('showemployeeform', record);
+    	}
+	});
+
+Ok, that's better. You may no notice such a great difference between having 2 different controllers now, but in a few we are going to add more functionality to the Form that will be handled by its controller.
+
+Up to here we have a list and we can select one item and display a form to edit it. So let's add more functionality to that form such as Save, Cancel, Back, etc..
+
+I have added a few items inside the form.
+
+	Ext.define('MyApp.view.employee.Form', {
+	    extend: 'Ext.form.Panel',
+	    xtype: 'employeeform',
+
+	    requires: [
+       		 'Ext.field.Text'
+    	],
+
+	    config: {
+
+        	items: [
+            	{
+                	xtype: 'titlebar',
+                	docked: 'top',
+                	items: [
+                    	{
+                        	xtype: 'button',
+                        	text: 'Prev',
+                        	action: 'showprevious',
+                        	ui: 'back',
+                       		align: 'left'
+                    	},
+                    	{
+                        	xtype: 'button',
+                        	text: 'Next',
+                        	action: 'shownext',
+                        	ui: 'forward',
+                       		align: 'right'
+                   		}
+                	]
+            	},
+            	{
+                	xtype: 'toolbar',
+                	docked: 'bottom',
+                	items: [
+                    	{
+                        	xtype: 'button',
+                        	text: 'Back',
+                        	action: 'back',
+                        	ui: 'back'
+                    	},
+                    	{
+                       		xtype: 'spacer'
+                    	},
+                    	{
+                        	xtype: 'button',
+                        	text: 'Save',
+                        	action: 'save',
+                       	 	ui: 'confirm'
+                    	},
+                    	{
+                        	xtype: 'button',
+                        	text: 'Cancel',
+                        	action: 'cancel',
+                       		ui: 'decline'
+                   	 	}
+                	]
+            	},
+            	{
+                	xtype : 'textfield',
+                	name  :  'first',
+                	label : 'First Name'
+            	},
+            	{
+                	xtype : 'textfield',
+                	name  : 'last',
+                	label : 'Last Name'
+            	}
+        	]
+    	}
+	});
+
+Basically we now have 2 toolbars on the Form. The top one allows the user to navigate between the records going back and forward in the store. The second one is located at bottom and will handle all the save/cancel operations and a back button to go back to the list.
+
+So this is just the view code, we now have to add logic inside our Controllers to do what we want in those cases. The Form controller will look like this:
+
+
+	Ext.define('MyApp.controller.employee.Form', {
+    	extend: 'Ext.app.Controller',
+
+	    config: {
+
+    	    refs: {
+        	    form: 'employeeform'
+        	},
+
+	        control: {
+	        	'employeeform button[action=showprevious]': {
+    	            'tap': 'showPreviousEmployee'
+        	    },
+            	'employeeform button[action=shownext]': {
+                	'tap': 'showNextEmployee'
+            	},
+            	'employeeform button[action=save]': {
+                	'tap': 'saveEmployee'
+            	},
+            	'employeeform button[action=cancel]': {
+                	'tap': 'discardChanges'
+            	},
+            	'employeeform button[action=back]': {
+                	'tap': 'goBackFromEmployeeForm'
+            	}
+        	}
+
+    	},
+
+
+    	init: function(){
+        	this.getApplication().on({
+            	'showemployeeform': this.showEmployee,
+            	scope: this
+        	});
+    	},
+
+	    saveEmployee: function(){
+    	    var me = this,
+        	    form = me.getForm(),
+           	 	record = form.getRecord(),
+           	 	values = form.getValues();
+        
+	        record.set(values);
+    	},
+
+	    discardChanges: function(){
+    	    var me = this,
+        	    form = me.getForm();
+
+	        form.reset();        
+    	},
+
+
+	    showEmployee: function(record){
+    	    var me = this,
+        	    form = me.getForm(),
+           	 	container = form.up('container');
+
+	        form.setRecord(record);
+    	    container.setActiveItem(form);
+    	},
+
+	    showPreviousEmployee: function(){
+    	    var me = this,
+        	    form = me.getForm(),
+            	store = Ext.getStore('Employees'),
+	            currentRecord = form.getRecord(),
+    	        idx = store.indexOf(currentRecord),
+        	    limit = 0,
+            	record;
+
+	        if(idx > limit){
+    	        record = store.getAt(idx - 1);
+        	    form.setRecord(record);    
+        	}    
+
+    	},
+
+	    showNextEmployee: function(){
+    	    var me = this,
+        	    form = me.getForm(),
+            	store = Ext.getStore('Employees'),
+	            currentRecord = form.getRecord(),
+    	        idx = store.indexOf(currentRecord),
+        	    limit = store.getCount() - 1,
+            	record;
+
+	        if(idx < limit){
+    	        record = store.getAt(idx + 1);
+        	    form.setRecord(record);    
+        	}    
+
+	    },
+
+    	goBackFromEmployeeForm: function(){
+        	this.getApplication().fireEvent('showemployeelist');
+	    }
+
+	});
+	
 	

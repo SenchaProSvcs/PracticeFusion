@@ -13,7 +13,12 @@ Ext.application({
         'Ext.MessageBox'
     ],
 
-    controllers :['Main'],
+    controllers :[
+        'Main',
+        'employee.List',
+        'employee.Form'
+    ],
+    
     views: ['Main'],
 
     icon: {
