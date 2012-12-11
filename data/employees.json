@@ -2,7 +2,12 @@
 	"employees": [
 		{"id": 1, "first": "John", "last": "Doe", "company_id": 1},
 		{"id": 2, "first": "John", "last": "Smith", "company_id": 1},
-		{"id": 3, "first": "Juan", "last": "Perez", "company_id": 1}
+		{"id": 3, "first": "Juan", "last": "Perez", "company_id": 1},
+        {"id": 4, "first": "Luke", "last": "Skywalker", "company_id": 2},
+        {"id": 5, "first": "Freddie", "last": "Mercury", "company_id": 2},
+        {"id": 6, "first": "Peter", "last": "Griffin", "company_id": 1},
+        {"id": 7, "first": "Louis", "last": "Griffin", "company_id": 1}
+
 	]
 
 }

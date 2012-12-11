@@ -6,7 +6,11 @@ Ext.define('MyApp.view.employee.Form', {
     xtype: 'employeeform',
 
     requires: [
-        'Ext.field.Text'
+        'Ext.field.Text',
+        'Ext.field.Select',
+        'Ext.Toolbar',
+        'Ext.TitleBar',
+        'Ext.Button'
     ],
 
     config: {
@@ -68,6 +72,15 @@ Ext.define('MyApp.view.employee.Form', {
                 xtype : 'textfield',
                 name  : 'last',
                 label : 'Last Name'
+            },
+            {
+                xtype : 'selectfield',
+                label : 'Company',
+                store : 'Companies',
+                name  : 'company_id',
+                valueField: 'id',
+                displayField: 'name'
+
             }
         ]
     }

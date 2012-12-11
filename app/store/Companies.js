@@ -8,7 +8,7 @@ Ext.define('MyApp.store.Companies', {
 
 		data: [
 			{id: 1, name:'Company Inc.'},
-			{id: 2, name:'Other Company Inc.'}
+			{id: 2, name:'Monster Inc.'}
 		]
 	}
 });
