@@ -33,5 +33,15 @@
             <target name="-before-build"/>
             <target name="-after-build"/>
     -->
-
+    <target name="docs" depends="init">
+        <property name="doc-src" value="${basedir}/doc-src"/>
+        <exec executable="jsduck" dir="." >
+            <arg value="${basedir}/app" />    
+            <arg value="${basedir}/ux" />    
+            <arg value="${basedir}/resources/theme/stylesheets" />
+            <arg value="--title=MyApp Sample Documentation" />
+            <arg value="--output=${basedir}/docs" /> 
+            <arg value="--categories=${doc-src}/class-categories.json"/>
+        </exec>
+    </target>
 </project>

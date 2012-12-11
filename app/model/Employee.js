@@ -1,3 +1,6 @@
+/**
+ *
+ */
 Ext.define('MyApp.model.Employee', {
 	extend: 'Ext.data.Model',
 

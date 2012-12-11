@@ -1,3 +1,6 @@
+/**
+ *
+ */
 Ext.define('MyApp.store.Employees', {
 	extend: 'Ext.data.Store',
 

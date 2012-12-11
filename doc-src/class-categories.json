@@ -1,0 +1,43 @@
+[
+    {
+        "name": "MyApp Sample Application",
+        "groups": [
+            {
+                "name": "Views",
+                "classes": [
+                    "MyApp.view.Main"
+                ]
+            },
+            {
+                "name": "Employees Views",
+                "classes": [
+                    "MyApp.view.employee.*"
+                ]
+            },
+            {
+                "name": "Controllers",
+                "classes": [
+                    "MyApp.controller.Main"
+                ]
+            },
+            {
+                "name": "Employee Controllers",
+                "classes": [
+                    "MyApp.controller.employee.*"
+                ]
+            },
+            {
+                "name": "Models",
+                "classes": [
+                    "MyApp.model.*"
+                ]
+            },   
+            {
+                "name": "Stores",
+                "classes": [
+                    "MyApp.store.*"
+                ]
+            }
+        ]
+    }
+]

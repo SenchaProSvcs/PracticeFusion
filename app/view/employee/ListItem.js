@@ -22,7 +22,6 @@ Ext.define('MyApp.view.employee.ListItem', {
 		/**
 		 * @cfg
 		 * helper to create the button for the first name.
-		 * @private
 		 */
 		firstNameButton: {
 			action: 'bar',

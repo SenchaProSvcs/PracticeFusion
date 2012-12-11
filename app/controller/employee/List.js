@@ -1,3 +1,6 @@
+/**
+ *
+ */
 Ext.define('MyApp.controller.employee.List', {
     extend: 'Ext.app.Controller',
 
