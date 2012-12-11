@@ -216,7 +216,8 @@ So in this case we want to load data from a _.json_ file we keep into _data_ fol
 So now we have an Store that will load data from a json file as a datasource.
 
 ### Associations (belongsTo, hasMany, hasOne)
-We can declare associations between two models. You can use _hasMany_, _belongsTo_ and _hasOne_ associations. An Employee _belongs to_ a Company and a Company _has many_ Employees.
+We can declare associations between two models. You can use _hasMany_, _belongsTo_ and _hasOne_ associations. 
+Here it is an example where an Employee _belongs to_ a Company and a Company _has many_ Employees.
 
 	Ext.define('MyApp.model.Company', {
 		extend: 'Ext.data.Model',
@@ -237,6 +238,6 @@ We can declare associations between two models. You can use _hasMany_, _belongsT
 	});
 
 
-We have specified _autoLoad:**true**_ that means that every time I instantiate a Company model, the association will try to get the data related to that particular Company instance. Where does the association read that data? Well, if you remember we specified a _proxy_ into the Employee model. That proxy will be used to query the datasource to retrieve Employees for that particular Company instance. Since we are using _fake_ data we would ending up with inconsistent data because we read a json file and retrieve the same data set no matter which parameter or filter we applied.
+We have specified _autoLoad:**true**_ that means that every time I instantiate a Company model, the association will try to get the data related to that particular Company instance. Where does the association read that data from? Well, if you remember we specified a _proxy_ into the Employee model. That proxy will be used to query the datasource to retrieve Employees for that particular Company instance. Since we are using _fake_ data we would ending up with inconsistent data because we read a json file and retrieve the same data set no matter which parameter or filter we applied.
 
 	
