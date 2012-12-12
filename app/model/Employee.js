@@ -20,6 +20,12 @@ Ext.define('MyApp.model.Employee', {
 			}
 		],
 
+		validations: [
+			{type: 'presence', field: 'first'},
+			{type: 'presence', field: 'last'}
+		],
+
+
 		associations: [
 			{
 				type: 'belongsTo',

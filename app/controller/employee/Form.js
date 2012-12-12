@@ -51,19 +51,39 @@ Ext.define('MyApp.controller.employee.Form', {
         var me = this,
             form = me.getForm(),
             record = form.getRecord(),
-            values = form.getValues();
-        
+            values = form.getValues(),
+            errors;
+
+        form.cleanErrors();
+
+        record.beginEdit();
+
         record.set(values);
+
+        errors = record.validate();
+
+        if(errors.isValid()){
+            record.endEdit();
+            //store.sync(); //we don't sync here since we have always the same fake response.
+        }else{
+            record.cancelEdit();
+            form.showErrors(errors);
+        }
+
     },
+
+
 
     /**
      * When user tap on cancel button we just reset the form. 
      */
     discardChanges: function(){
         var me = this,
-            form = me.getForm();
+            form = me.getForm(),
+            record = form.getRecord();
 
-        form.reset();        
+        form.setRecord(record);
+        form.cleanErrors();
     },
 
     /**
