@@ -13,6 +13,8 @@ Ext.application({
         'Ext.MessageBox'
     ],
 
+    profiles: ['Phone'],
+
     controllers :[
         'Main',
         'employee.List',
