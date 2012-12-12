@@ -4,6 +4,7 @@
 Ext.define('MyApp.view.Main', {
     extend: 'Ext.tab.Panel',
     xtype: 'main',
+
     requires: [
         'Ext.TitleBar',
         'Ext.field.Select',
@@ -11,6 +12,7 @@ Ext.define('MyApp.view.Main', {
         'MyApp.view.employee.List',
         'MyApp.view.employee.Form'
     ],
+    
     config: {
         tabBarPosition: 'bottom',
         items: [

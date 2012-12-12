@@ -23,7 +23,6 @@ This sample application covers, but it is not limited to, the following set of f
 - Form panels, Models and Controllers.
 - Using the Application as event bus.
 - Proxies to read from files (.json) to emulate fake REST endpoints
-- Locales/i18n
 - Best Practices for Controllers/Views
 - Using refs
 - Using ComponentQueries with types, down/up methods
