@@ -239,6 +239,91 @@ Here it is an example where an Employee _belongs to_ a Company and a Company _ha
 
 We have specified _autoLoad:**true**_ that means that every time I instantiate a Company model, the association will try to get the data related to that particular Company instance. Where does the association read that data from? Well, if you remember we specified a _proxy_ into the Employee model. That proxy will be used to query the datasource to retrieve Employees for that particular Company instance. Since we are using _fake_ data we would ending up with inconsistent data because we read a json file and retrieve the same data set no matter which parameter or filter we applied.
 
+### Models, Proxies and CRUD Operations using REST
+In our example we are using an ajax proxy since we are dealing with fake data we retrieve from a file. In real world examples you would have a REST endpoint for your CRUD operations. Sencha Touch supports REST out of the box, meaning that you just need to define your proxy as a rest proxy. In our example we can do that on the Employee class definition:
+
+	Ext.define('MyApp.model.Employee', {
+		extend: 'Ext.data.Model',
+		
+		config: {
+			fields: [
+				'id',
+			 	{name: 'firstName', mapping: 'first'}, 
+			 	'last',
+			 	{
+			 		name: 'name',
+			 		convert: function(value, record){
+			 			return record.get('last') + ', ' + record.get('firstName');
+			 		}
+			 	}
+			 ],
+			 
+			 proxy: {
+			 	type: "rest",
+	        	url : "/rest/v1/employee"
+			 }
+		}
+	});
+
+In the example we are declaring the rest proxy to communicate with our REST service at some url like this:
+
+	http://localhost:8888/rest/v1/employee
+
+If you take a look on the RestProxy documentation you will find a property named **actionMethods** which by default is declared as follows:
+
+	   actionMethods: {
+            create : 'POST',
+            read   : 'GET',
+            update : 'PUT',
+            destroy: 'DELETE'
+        }	
+
+
+This means that everytime we create a new model instance for a employee and we save it, the proxy gets called and it will use the corresponding method associated with the action, in this case _create_ will perform a _POST_ to the given url. The body will be json encoded. This is the default _writer_ for a RestProxy.
+
+	POST http://localhost:8888/rest/v1/employee
+
+	{
+		"first": "XXXXX",
+		"last": "YYYY"
+	}
+
+We can save our employee using sync() method on the store if we previously add it to, or just call the method save() on the model instance. As well, remember that you can set _autoSync_ :true on the Store definition and everytime you add a new record, the store will call the sync for you behind the scenes.
+
+If you look at our proxy definition, we have not declared a reader, usually you return an array when performing a load of many as in the following example:
+
+	GET http://localhost:8888/rest/v1/employee
+	
+You may have a response like this:
+
+	[
+		{
+			"id": 1, 
+			"first": "first",
+			"last" : "fisrt" 
+		},
+		{
+			"id": 2, 
+			"first": "second",
+			"last" : "second" 
+		}
+	
+	]	
+
+While when loading an specific record you do:
+
+	GET http://localhost:8888/rest/v1/employee/1
+
+and the response could be:
+
+	{
+		"id": 1, 
+		"first": "first",
+		"last" : "fisrt" 
+	}
+
+The rest proxy assumes that a not named array is an array of the models you are trying to load.
+
 ### Form panels, Models and Controllers
 Let's assume that we want to edit/show a particular employee information in a form panel. So when a user tap on the Employees list the application will show a panel with the selected employee info.
 
