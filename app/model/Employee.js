@@ -8,9 +8,9 @@ Ext.define('MyApp.model.Employee', {
 
 		fields: [
 			'id',
-			'first',	
+			'first',
 			'last',
-			//the name field doesn't exist on the data retrieved. It is a dynamic field created for each 
+			//the name field doesn't exist on the data retrieved. It is a dynamic field created for each
 			//record returning a string with the form {last}, {first}
 			{
 				name: 'name',
@@ -38,13 +38,13 @@ Ext.define('MyApp.model.Employee', {
 
 		//this store will load employees from a fake endpoint, in this case a json file under data
 		proxy: {
-	        type: "ajax",
-	        url : "data/employees.json",
-	        reader: {
-	            type: "json",
-	            rootProperty: "employees"
-	        }
-	    }
+            type: "ajax",
+            url : "data/employees.json",
+            reader: {
+                type: "json",
+                rootProperty: "employees"
+            }
+        }
 
 
 	}

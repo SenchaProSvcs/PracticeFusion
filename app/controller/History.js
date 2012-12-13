@@ -26,8 +26,6 @@ Ext.define('MyApp.controller.History', {
         }else{
             record.set('route', route);
         }
-
-        console.log('history saved');
     },
 
 
@@ -39,8 +37,6 @@ Ext.define('MyApp.controller.History', {
         if(history){
             me.redirectTo(history.get('route'));
         }
-
-        console.log('history loaded', history);
     }
 
 
