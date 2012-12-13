@@ -16,6 +16,7 @@ Ext.application({
     profiles: ['Phone'],
 
     controllers :[
+        'History',
         'Main',
         'employee.List',
         'employee.Form'
@@ -47,6 +48,8 @@ Ext.application({
 
         // Initialize the main view
         Ext.Viewport.add(Ext.create('MyApp.view.Main'));
+
+        this.fireEvent('loadhistory');
     },
 
     onUpdated: function() {

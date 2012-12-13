@@ -11,11 +11,13 @@ Ext.define('MyApp.controller.employee.List', {
         },
 
         control: {
-
             'employeelist': {
                 'itemtap': 'showEmployeeForm'
             }
+        },
 
+        routes: {
+            'employees': 'showEmployeeList'
         }
     },
 
@@ -24,14 +26,21 @@ Ext.define('MyApp.controller.employee.List', {
      */
     init: function(){
         this.getApplication().on({
-            'showemployeelist': this.showEmployeeList,
+            'showemployeelist': this.onShowEmployeeList,
             scope: this
         });
     },
 
+    onShowEmployeeList: function(){
+        var me = this,
+            route = 'employees';
+
+        me.getApplication().fireEvent('savehistory', route);
+        me.redirectTo(route);
+    },
 
     /**
-     * A listener for showemployeelist application event. This method will display the list by setting it as the 
+     * A listener for showemployeelist application event. This method will display the list by setting it as the
      * active item in its parent container, which we know has a card layout.
      */
     showEmployeeList: function(){

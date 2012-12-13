@@ -27,20 +27,21 @@ Ext.define('MyApp.controller.employee.Form', {
                 'tap': 'goBackFromEmployeeForm'
             }
 
-        }
+        },
 
+        routes: {
+            'employee/:id': 'showEmployeeById'
+        }
     },
 
     /**
      * init method is called when the application launch. So here we setup the listeners on the application bus.
      */
     init: function(){
-
         this.getApplication().on({
-            'showemployeeform': this.showEmployee,
+            'showemployeeform': this.onShowEmployee,
             scope: this
         });
-
     },
 
     /**
@@ -55,8 +56,9 @@ Ext.define('MyApp.controller.employee.Form', {
             errors;
 
         form.cleanErrors();
-        //since we are changing the record we don't want to fire events 
-        //so we call beginEdit before setting the values. 
+
+        //since we are changing the record we don't want to fire events
+        //so we call beginEdit before setting the values.
         record.beginEdit();
         //set the form values
         record.set(values);
@@ -65,11 +67,11 @@ Ext.define('MyApp.controller.employee.Form', {
 
         if(errors.isValid()){
             //if record is valid, then end edit. this method will fire update event on the store
-            //in case we have a autoSync true on the store. 
+            //in case we have a autoSync true on the store.
             record.endEdit();
             //we don't sync here since we have always the same fake response.
             //we can sync manually or add autoSync true on the store definition.
-            //store.sync(); 
+            //store.sync();
         }else{
             record.cancelEdit();
             //now we call a custom function on the form to display the errors.
@@ -79,7 +81,7 @@ Ext.define('MyApp.controller.employee.Form', {
     },
 
     /**
-     * When user tap on cancel button we just reset the form. 
+     * When user tap on cancel button we just reset the form.
      */
     discardChanges: function(){
         var me = this,
@@ -91,8 +93,40 @@ Ext.define('MyApp.controller.employee.Form', {
         form.cleanErrors();
     },
 
+    onShowEmployee: function(record){
+        var me = this,
+            id = record.get('id'),
+            route = 'employee/'+id;
+
+        me.getApplication().fireEvent('savehistory', route);
+        me.redirectTo(route);
+    },
+
     /**
-     * Set the given record to the form and makes the form the active item on the parent container which 
+     *
+     */
+    showEmployeeById: function(id){
+        var me = this,
+            store = Ext.getStore('Employees'),
+            record;
+
+        if(!store.isLoaded()){
+            store.on({
+                'load': function(){
+                    me.showEmployeeById(id);
+                },
+                scope: this,
+                single: true
+            });
+            store.load();
+        }
+
+        record = store.getById(id);
+        me.showEmployee(record);
+    },
+
+    /**
+     * Set the given record to the form and makes the form the active item on the parent container which
      * we know has a card layout.
      */
     showEmployee: function(record){
@@ -114,12 +148,16 @@ Ext.define('MyApp.controller.employee.Form', {
             currentRecord = form.getRecord(),
             idx = store.indexOf(currentRecord),
             limit = 0,
-            record;
+            record, route;
 
         if(idx > limit){
             record = store.getAt(idx - 1);
-            form.setRecord(record);    
-        }    
+            // form.setRecord(record);
+
+            route = 'employee/'+record.get('id');
+            me.getApplication().fireEvent('savehistory', route);
+            me.redirectTo(route);
+        }
 
     },
 
@@ -133,12 +171,15 @@ Ext.define('MyApp.controller.employee.Form', {
             currentRecord = form.getRecord(),
             idx = store.indexOf(currentRecord),
             limit = store.getCount() - 1,
-            record;
+            record, route;
 
         if(idx < limit){
             record = store.getAt(idx + 1);
-            form.setRecord(record);    
-        }    
+            // form.setRecord(record);
+            route = 'employee/'+record.get('id');
+            me.getApplication().fireEvent('savehistory', route);
+            me.redirectTo(route);
+        }
 
     },
 

@@ -20,6 +20,7 @@ This sample application covers, but it is not limited to, the following set of f
 - Models definitions
 - Stores and Proxies
 - Associations (belongsTo, hasMany, hasOne)
+- Models, Proxies and CRUD Operations using REST
 - Form panels, Models and Controllers.
 - Using the Application as event bus.
 - Proxies to read from files (.json) to emulate fake REST endpoints
@@ -28,6 +29,7 @@ This sample application covers, but it is not limited to, the following set of f
 - Using ComponentQueries with types, down/up methods
 - Integrating ant tasks with the new Sencha Cmd - such as generating documentation with JSDuck - (For Touch 2.1 you have to migrate from SDK Tools to Sencha Cmd)
 - Complex targets in Grids: Adding an input tag into an itemTpl and how to target it from a controller method.
+- Using Profiles
 
 ## Features drill-down
 
