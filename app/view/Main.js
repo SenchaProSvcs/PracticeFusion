@@ -32,6 +32,11 @@ Ext.define('MyApp.view.Main', {
                                 text: 'Tap Me'
                             },
                             {
+                                xtype: 'button',
+                                action: 'focussearch',
+                                text: 'Focus on Search'
+                            },
+                            {
                                 xtype: 'selectfield',
                                 name: 'where',
                                 options: [

@@ -4,8 +4,6 @@
 Ext.define('MyApp.controller.Main', {
 	extend: 'Ext.app.Controller',
 	
-
-	
 	config : {
 
 	    stores: ['Employees', 'Companies'],
@@ -20,23 +18,21 @@ Ext.define('MyApp.controller.Main', {
 			'main': {
 				'activate': 'loadEmployees'
 			},
-
 			'main button[action=foo]': {
 				tap: 'doSomething'
 			},
-
+			//when user taps on the button then make the search field focused.
+			'main button[action=focussearch]': {
+				'tap': 'focusSearchInput'
+			},
 			'main dataitem button[action=bar]': {
 				'tap': 'doSomethingOnButtonItem'
 			},
-
 			//when user types into the search textfield then filter employees list.
 			'main titlebar textfield[name=filter]': {
 				'keyup': 'filterEmployeeList'
 			}
-
-
 		}
-
 	},
 
 	/**
@@ -73,6 +69,16 @@ Ext.define('MyApp.controller.Main', {
 		Ext.getStore('Employees').load();
 	},
 
+	/**
+	 * Grab the textfield for search and make focus on it so tablet will display the keyboard.
+	 */
+	focusSearchInput: function(btn, e, eOpts){
+		//we can go up and down from the btn reference or we can create a new ref for the textfield.
+		var searchField = btn.up('titlebar').down('textfield[name=filter]');
+
+		searchField.focus();
+	},
+
 
 	doSomething: function(){
 		var employees = Ext.getStore('Employees'),
@@ -88,7 +94,7 @@ Ext.define('MyApp.controller.Main', {
 
 	},
 
-	doSomethingOnButtonItem: function(btn, event, eOpts){
+	doSomethingOnButtonItem: function(btn, e, eOpts){
 		//getting the record of a given list item
 		var employee = btn.up('dataitem').getRecord();
 		console.log('button tap for record', employee);
