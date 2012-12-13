@@ -55,24 +55,28 @@ Ext.define('MyApp.controller.employee.Form', {
             errors;
 
         form.cleanErrors();
-
+        //since we are changing the record we don't want to fire events 
+        //so we call beginEdit before setting the values. 
         record.beginEdit();
-
+        //set the form values
         record.set(values);
-
+        //validate the record
         errors = record.validate();
 
         if(errors.isValid()){
+            //if record is valid, then end edit. this method will fire update event on the store
+            //in case we have a autoSync true on the store. 
             record.endEdit();
-            //store.sync(); //we don't sync here since we have always the same fake response.
+            //we don't sync here since we have always the same fake response.
+            //we can sync manually or add autoSync true on the store definition.
+            //store.sync(); 
         }else{
             record.cancelEdit();
+            //now we call a custom function on the form to display the errors.
             form.showErrors(errors);
         }
 
     },
-
-
 
     /**
      * When user tap on cancel button we just reset the form. 
@@ -83,6 +87,7 @@ Ext.define('MyApp.controller.employee.Form', {
             record = form.getRecord();
 
         form.setRecord(record);
+        //remove errors in case we have displayed them.
         form.cleanErrors();
     },
 
