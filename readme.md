@@ -30,6 +30,7 @@ This sample application covers, but it is not limited to, the following set of f
 - Integrating ant tasks with the new Sencha Cmd - such as generating documentation with JSDuck - (For Touch 2.1 you have to migrate from SDK Tools to Sencha Cmd)
 - Complex targets in Grids: Adding an input tag into an itemTpl and how to target it from a controller method.
 - Using Profiles
+- Keep state when page reloads (A solution for Home Screen apps)
 
 ## Features drill-down
 
@@ -799,3 +800,148 @@ You can check the profile guide from [here](http://docs.sencha.com/touch/2-1/#!/
 7. Reload the application.
 
 At this point you should be able to see an application that displays the a TabPanel with only a list of employees.
+
+###Keep state when page reloads (A solution for Home Screen apps)
+A common issue when adding an application in the Home Screen is that everytime you open it, the webview reloads the application. Having your files as part of the cache manifest doesn't solve the issue, it only helps to keep your files cached so the app starts faster or works offline. 
+The solution seems to be keeping the state of your application into a local storage. And when the application starts apply that state if it is available.
+Going forward with that approach, I have created here a few new components:
+
+- A model with a local storage proxy to maintain the state
+- An store to get access to those states
+- A controller responsible to read/write the states.
+
+I have also added routes to use as "checkpoints" of the application navigation. So when I show a particular record for an employee, I'm asking the controller to execute a route named "employee/XXX" where XXX is the employee Id I'm displaying, and I said those will be my checkpoints, so before redirecting to one of those routes, I send a message (fire an event) to save the state of the with the route I'm going to call.
+
+The History Controller will be responsible to listen to those events and update the history state.
+
+Finally we need to send another message when the application loads to the History controller so it can redirect to the latest saved state if there was one.
+
+History Model and local storage proxy:
+
+    Ext.define('MyApp.model.History', {
+        extend: 'Ext.data.Model',
+
+        config: {
+            fields: ['id', 'route'],
+
+            proxy: {
+                type: 'localstorage',
+                id: 'history-local'
+            }
+        }
+    }); 
+
+History Store:
+
+	Ext.define('MyApp.store.History', {
+        extend: 'Ext.data.Store',
+
+        requires: ['MyApp.model.History'],
+
+        config: {
+            autoLoad: true,
+            autoSync: true,
+            model: 'MyApp.model.History'
+        }
+    });
+    
+ History Controller:
+ 
+	Ext.define('MyApp.controller.History', {
+        extend: 'Ext.app.Controller',
+
+        config: {
+
+            stores: ['History']
+            
+        },
+
+        init: function(){
+            this.getApplication().on({
+                'loadhistory': this.loadSaved,
+                'savehistory': this.onSaveHistory,
+                scope: this
+            });
+        },
+
+
+        onSaveHistory: function(route){
+            var me = this,
+                store = Ext.getStore('History'),
+                record = store.last();
+
+            if(!record){
+               store.add({route: route});
+            }else{
+                record.set('route', route);
+            }
+        },
+
+
+        loadSaved: function(){
+            var me = this,
+                store = Ext.getStore('History'),
+                history = store.last();
+
+            if(history){
+                me.redirectTo(history.get('route'));
+            }
+        }
+
+
+    });   
+    
+The employee form controller fires an event everytime it executes the route:
+
+	Ext.define('MyApp.controller.employee.Form', {
+	
+		//...
+	
+		showPreviousEmployee: function(){
+       		var me = this,
+                form = me.getForm(),
+            	store = Ext.getStore('Employees'),
+            	currentRecord = form.getRecord(),
+            	idx = store.indexOf(currentRecord),
+            	limit = 0,
+            	record, route;
+
+		    if(idx > limit){
+        		record = store.getAt(idx - 1);
+
+	            route = 'employee/'+record.get('id');
+    	        me.getApplication().fireEvent('savehistory', route);
+        	    me.redirectTo(route);
+        	}
+
+    	},
+    	
+    	//...
+	
+	});
+	
+
+Finally, on the launch function in app.js we fire an event to load the saved state:
+
+	Ext.application({
+		//...
+		launch: function() {
+			//...
+			
+	        // Initialize the main view
+    	    Ext.Viewport.add(Ext.create('MyApp.view.Main'));
+
+       		this.fireEvent('loadhistory');
+    	},
+	
+	});	
+	
+	
+You can test this behavior fairly easy:  
+
+- Load the application on your browser
+- Add it to home screen
+- Open home screen app
+- Go to any employee in the list that shows the employee form
+- Close the app.
+- Open it again.
