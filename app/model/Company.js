@@ -9,7 +9,7 @@ Ext.define('MyApp.model.Company', {
 				type: 'hasMany',
 				model : 'MyApp.model.Employee',
 				name : 'employees',
-				foreingKey: 'company_id',
+				foreignKey: 'company_id',
 				autoLoad: true
 			}
 		]
