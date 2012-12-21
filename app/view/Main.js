@@ -11,7 +11,9 @@ Ext.define('MyApp.view.Main', {
         'MyApp.view.employee.DataView',
         'MyApp.view.employee.List',
         'MyApp.view.employee.Form',
+        'MyApp.view.phone.CoolTabPanel',
         'MyApp.view.Textarea'
+
     ],
     
     config: {
@@ -73,8 +75,10 @@ Ext.define('MyApp.view.Main', {
                         ]
                     }
                 ]
+
                 
-            },{
+            },
+            {
                 title: 'Form',
                 xtype: 'formpanel',
                 // scrollable: false,
@@ -84,9 +88,16 @@ Ext.define('MyApp.view.Main', {
                         maxRows: 4,
                         name: 'datextarea',
                         value: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse vel augue neque, sit amet tincidunt felis. Cras semper elit quis odio congue et sollicitudin massa blandit. Aliquam et lectus id libero mollis viverra at non leo. Ut urna urna, accumsan at iaculis in, mattis pharetra turpis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nulla eget lorem massa. Nunc vel nibh nec ante eleifend interdum. Cras magna turpis, sodales vel elementum a, congue et erat. Sed aliquam commodo augue nec vulputate. Pellentesque vitae iaculis augue. Etiam non ligula eu diam gravida dignissim. Sed sodales pretium mi, eu venenatis nisl aliquam et. Mauris porta egestas est id scelerisque. Integer elementum scelerisque libero, sollicitudin lacinia enim viverra non.'
+
                     }
                 ]
+            },
+            {
+                title: 'TabPanel',
+                xtype: 'cooltabpanel',
+                iconCls: 'favorites'
             }
         ]
+
     }
 });

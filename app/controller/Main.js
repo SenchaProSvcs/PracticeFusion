@@ -10,7 +10,8 @@ Ext.define('MyApp.controller.Main', {
 
 	    refs: {
             //this is the selectfield that contains the property we want to filter by.
-	    	searchOption: 'main titlebar selectfield[name=where]'
+	    	searchOption: 'main titlebar selectfield[name=where]',
+            coolTabPanel: 'cooltabpanel'
 	    },
 
 		control: {
@@ -31,7 +32,10 @@ Ext.define('MyApp.controller.Main', {
 			//when user types into the search textfield then filter employees list.
 			'main titlebar textfield[name=filter]': {
 				'keyup': 'filterEmployeeList'
-			}
+			},
+            'cooltabpanel': {
+                'activate': 'populateTabPanel'
+            }
 		}
 	},
 
@@ -100,6 +104,35 @@ Ext.define('MyApp.controller.Main', {
 		console.log('button tap for record', employee);
 		console.log('name for employee', employee.get('first'));
 
-	}
+	},
+
+    populateTabPanel: function() {
+        var ctp = this.getCoolTabPanel();
+        var firstTab = Ext.create('Ext.Container', {cls: 'generalContainer', title: 'sup'});
+        var secondTab= Ext.create('Ext.Container', {cls: 'generalContainer', title: 'yo'});
+
+        var secondTextArea = Ext.create('MyApp.view.Textarea', {value: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' +
+            'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' +
+            'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' +
+            'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' +
+            'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+            maxRows: 4, width: 500, cls:'hello'});
+
+        var firstTextArea = Ext.create('MyApp.view.Textarea', {value: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' +
+            'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' +
+            'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' +
+            'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' +
+            'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' +
+            'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' +
+            'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' +
+            'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' ,
+       maxRows: 4, width: 500, cls:'hello'});
+
+        firstTab.add(secondTextArea);
+        secondTab.add(firstTextArea);
+
+        ctp.add(firstTab);
+        ctp.add(secondTab);
+    }
 
 });

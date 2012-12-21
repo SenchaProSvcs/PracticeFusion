@@ -5,6 +5,7 @@ Ext.Loader.setPath({
 });
 //</debug>
 
+Ext.Loader.setConfig({ disableCaching: false, enabled: true});
 
 Ext.application({
     name: 'MyApp',
